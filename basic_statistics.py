@@ -1,8 +1,9 @@
 import numpy as np
 from scipy.stats import pearsonr
+import pandas as pd
 
 def mbe(Obs, Cal):
-     """
+    """
     Mean Bias Error
     INPUT:
     Cal: (N,) array_like of calculated values
@@ -70,7 +71,7 @@ def d(Obs, Cal, order = 2):
         return np.nan
 
     nominator = np.nansum(np.power(Cal - Obs, order))
-    return 1 - (nominator / denominator)
+    return round(1 - (nominator / denominator), 2)
 
 def r2(Obs, Cal):
     """
@@ -85,5 +86,13 @@ def r2(Obs, Cal):
         r^2 = \frac{[\sum (C_{i} - \bar{C})(O_{i} - \bar{O})]^2}
                    {\sum ( C_{i} - \bar{C})^2 + \sum (O_{i} - \bar{O} )^2}
     """
-    result = pearsonr(Obs, Cal) ** 2.0
+    
+    dic = {'obs': Obs, 'cal': Cal}
+    temp = pd.DataFrame.from_dict(dic)
+    temp = temp.dropna()
+    Obs_ = temp['obs'].to_numpy()
+    Cal_ = temp['cal'].to_numpy()
+    result = round(pearsonr(Obs_, Cal_)[0] ** 2.0, 2)
     return result
+
+
